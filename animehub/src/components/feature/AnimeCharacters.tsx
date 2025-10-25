@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import { supabase } from '../../lib/supabase'
 
 interface Character {
@@ -20,7 +20,6 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
   const [characters, setCharacters] = useState<Character[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<'main'>('main')
 
   useEffect(() => {
     const fetchCharacters = async () => {
