@@ -125,6 +125,7 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
   const filteredCharacters = getFilteredCharacters()
 
   return (
+    <>
     <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/20">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
@@ -316,5 +317,6 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
         </motion.div>
       )}
     </AnimatePresence>
+    </>
   )
 }
