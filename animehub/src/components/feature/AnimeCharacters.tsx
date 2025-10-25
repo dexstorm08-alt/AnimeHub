@@ -22,6 +22,11 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'main'>('main')
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null)
+  const [isDescExpanded, setIsDescExpanded] = useState(false)
+
+  useEffect(() => {
+    setIsDescExpanded(false)
+  }, [selectedCharacter])
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -250,7 +255,7 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 10 }}
             transition={{ duration: 0.2 }}
-            className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden"
+            className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[85vh] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -264,7 +269,7 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
               >
                 <i className="ri-close-line text-lg"></i>
               </button>
-              <div className="absolute -bottom-10 left-6 w-20 h-20 rounded-full overflow-hidden ring-4 ring-white/80 bg-white">
+              <div className="absolute -bottom-10 left-6 w-20 h-20 rounded-full overflow-hidden ring-4 ring-white/80 bg-white shadow-lg">
                 {selectedCharacter.image_url ? (
                   <img
                     src={selectedCharacter.image_url}
@@ -284,7 +289,7 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
               </div>
             </div>
             
-            <div className="pt-12 p-6">
+            <div className="pt-12 p-6 overflow-y-auto max-h-[calc(85vh-8rem)]">
               <h3 id="character-detail-title" className="text-xl font-bold text-gray-900 mb-1">
                 {selectedCharacter.name}
               </h3>
@@ -307,7 +312,19 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
               
               <div className="prose prose-sm max-w-none text-gray-700">
                 {selectedCharacter.description ? (
-                  <p className="leading-relaxed">{selectedCharacter.description}</p>
+                  <>
+                    <p className={`leading-relaxed ${isDescExpanded ? '' : 'line-clamp-5'}`}>
+                      {selectedCharacter.description}
+                    </p>
+                    {selectedCharacter.description.length > 260 && (
+                      <button
+                        className="mt-2 text-teal-700 hover:text-teal-900 font-medium"
+                        onClick={() => setIsDescExpanded(v => !v)}
+                      >
+                        {isDescExpanded ? 'Show less' : 'Show more'}
+                      </button>
+                    )}
+                  </>
                 ) : (
                   <p className="text-gray-500">No additional information available for this character.</p>
                 )}
