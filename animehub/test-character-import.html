@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Import Debug Tool</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        pre { background-color: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🎭 Character Import Debug Tool</h1>
+    
+    <div class="section info">
+        <h3>📊 Step 1: Check Database Tables</h3>
+        <p>Run these SQL queries in your Supabase dashboard:</p>
+        <pre>
+-- Check if tables exist
+SELECT table_name FROM information_schema.tables 
+WHERE table_name IN ('anime_characters', 'anime_relations', 'anime_studios');
+
+-- Check anime_characters table structure
+SELECT column_name, data_type, is_nullable 
+FROM information_schema.columns 
+WHERE table_name = 'anime_characters' 
+ORDER BY ordinal_position;
+        </pre>
+        <button onclick="copyToClipboard('SELECT table_name FROM information_schema.tables WHERE table_name IN (\\'anime_characters\\', \\'anime_relations\\', \\'anime_studios\\');')">
+            Copy Table Check Query
+        </button>
+    </div>
+
+    <div class="section info">
+        <h3>🔧 Step 2: Create Missing Tables</h3>
+        <p>If tables don't exist, run this SQL:</p>
+        <pre>
+-- Create anime_characters table
+CREATE TABLE IF NOT EXISTS anime_characters (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  anime_id UUID REFERENCES anime(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  name_japanese VARCHAR(255),
+  name_romaji VARCHAR(255),
+  image_url TEXT,
+  role VARCHAR(50) CHECK (role IN ('main', 'supporting', 'antagonist', 'background')),
+  description TEXT,
+  voice_actor VARCHAR(255),
+  voice_actor_japanese VARCHAR(255),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create indexes
+CREATE INDEX IF NOT EXISTS idx_anime_characters_anime_id ON anime_characters(anime_id);
+CREATE INDEX IF NOT EXISTS idx_anime_characters_role ON anime_characters(role);
+        </pre>
+        <button onclick="copyToClipboard('CREATE TABLE IF NOT EXISTS anime_characters (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), anime_id UUID REFERENCES anime(id) ON DELETE CASCADE, name VARCHAR(255) NOT NULL, name_japanese VARCHAR(255), name_romaji VARCHAR(255), image_url TEXT, role VARCHAR(50) CHECK (role IN (\\'main\\', \\'supporting\\', \\'antagonist\\', \\'background\\')), description TEXT, voice_actor VARCHAR(255), voice_actor_japanese VARCHAR(255), created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(), updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW());')">
+            Copy Table Creation Query
+        </button>
+    </div>
+
+    <div class="section info">
+        <h3>🧪 Step 3: Test AniList API</h3>
+        <p>Test if AniList is returning character data:</p>
+        <button onclick="testAniListAPI()">Test AniList API</button>
+        <div id="anilist-result"></div>
+    </div>
+
+    <div class="section info">
+        <h3>📊 Step 4: Check Import Results</h3>
+        <p>After importing anime, check if characters were imported:</p>
+        <pre>
+-- Check character counts per anime
+SELECT 
+  a.title,
+  COUNT(ac.id) as character_count
+FROM anime a
+LEFT JOIN anime_characters ac ON a.id = ac.anime_id
+GROUP BY a.id, a.title
+ORDER BY a.created_at DESC
+LIMIT 10;
+
+-- Check character roles
+SELECT 
+  role, 
+  COUNT(*) as count 
+FROM anime_characters 
+GROUP BY role 
+ORDER BY count DESC;
+        </pre>
+        <button onclick="copyToClipboard('SELECT a.title, COUNT(ac.id) as character_count FROM anime a LEFT JOIN anime_characters ac ON a.id = ac.anime_id GROUP BY a.id, a.title ORDER BY a.created_at DESC LIMIT 10;')">
+            Copy Character Check Query
+        </button>
+    </div>
+
+    <div class="section info">
+        <h3>🚨 Common Issues & Solutions</h3>
+        <ul>
+            <li><strong>Table doesn't exist:</strong> Run the table creation SQL above</li>
+            <li><strong>Using Jikan instead of AniList:</strong> Use "AniList Search" tab in admin panel</li>
+            <li><strong>No characters in AniList response:</strong> Check AniList API status</li>
+            <li><strong>Database permissions:</strong> Check RLS policies in Supabase</li>
+            <li><strong>Import process not running:</strong> Check console logs during import</li>
+        </ul>
+    </div>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Query copied to clipboard!');
+            });
+        }
+
+        async function testAniListAPI() {
+            const resultDiv = document.getElementById('anilist-result');
+            resultDiv.innerHTML = '<p>Testing AniList API...</p>';
+            
+            try {
+                const query = `
+                    query {
+                        Media(search: "Attack on Titan", type: ANIME) {
+                            id
+                            title { romaji english native }
+                            characters(sort: [ROLE, RELEVANCE], perPage: 50) {
+                                edges {
+                                    id
+                                    role
+                                    node {
+                                        id
+                                        name { full native alternative }
+                                        image { large medium }
+                                        description
+                                    }
+                                }
+                            }
+                        }
+                    }
+                `;
+                
+                const response = await fetch('https://graphql.anilist.co', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query })
+                });
+                
+                const data = await response.json();
+                
+                if (data.data?.Media?.characters?.edges) {
+                    const characters = data.data.Media.characters.edges;
+                    const roleCounts = characters.reduce((acc, char) => {
+                        acc[char.role] = (acc[char.role] || 0) + 1;
+                        return acc;
+                    }, {});
+                    
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h4>✅ AniList API Working!</h4>
+                            <p><strong>Anime:</strong> ${data.data.Media.title.english || data.data.Media.title.romaji}</p>
+                            <p><strong>Characters Found:</strong> ${characters.length}</p>
+                            <p><strong>Role Distribution:</strong> ${JSON.stringify(roleCounts)}</p>
+                            <p>Characters should be imported successfully!</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <h4>❌ No Characters Found</h4>
+                            <p>AniList API response doesn't contain character data.</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h4>❌ AniList API Error</h4>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

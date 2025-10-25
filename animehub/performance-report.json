@@ -1,0 +1,41 @@
+{
+  "bundleSize": {
+    "totalFiles": 54,
+    "totalSize": 4988524,
+    "totalSizeMB": "4.76",
+    "largestFiles": [
+      {
+        "path": "out\\assets\\index-0_TjRqPF.js.map",
+        "size": "2737.04KB"
+      },
+      {
+        "path": "out\\assets\\index-0_TjRqPF.js",
+        "size": "557.28KB"
+      },
+      {
+        "path": "out\\assets\\page-D8ACgQC5.js.map",
+        "size": "366.39KB"
+      },
+      {
+        "path": "out\\assets\\page-D8ACgQC5.js",
+        "size": "132.01KB"
+      },
+      {
+        "path": "out\\assets\\page-CHXw89QP.js.map",
+        "size": "105.47KB"
+      }
+    ]
+  },
+  "loadTime": {
+    "simulatedLoadTime": 1903.1016000000002,
+    "targetLoadTime": 3000,
+    "performance": "good"
+  },
+  "memoryUsage": {
+    "initialHeap": "4.72",
+    "finalHeap": "7.72",
+    "memoryIncrease": "3.00",
+    "performance": "good"
+  },
+  "recommendations": []
+}
