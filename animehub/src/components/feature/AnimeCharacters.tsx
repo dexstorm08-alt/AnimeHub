@@ -10,6 +10,8 @@ interface Character {
   role: string
   image_url?: string
   description?: string
+  voice_actor?: string
+  voice_actor_japanese?: string
 }
 
 type ParsedCharacterDetails = {
@@ -120,10 +122,31 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [expandedById, setExpandedById] = useState<Record<string, boolean>>({})
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null)
 
   const toggleExpanded = (id: string) => {
     setExpandedById(prev => ({ ...prev, [id]: !prev[id] }))
   }
+
+  const openDetails = (character: Character) => {
+    setSelectedCharacter(character)
+  }
+
+  const closeDetails = () => {
+    setSelectedCharacter(null)
+  }
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeDetails()
+      }
+    }
+    if (selectedCharacter) {
+      window.addEventListener('keydown', onKeyDown)
+      return () => window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [selectedCharacter])
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -269,10 +292,10 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault()
-                  toggleExpanded(character.id)
+                  openDetails(character)
                 }
               }}
-              onClick={() => toggleExpanded(character.id)}
+              onClick={() => openDetails(character)}
               className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/30 hover:shadow-xl transition-all duration-300 group cursor-pointer"
             >
               {/* Character Image */}
@@ -379,6 +402,116 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
           <p className="text-gray-500">
             No main characters found for this anime.
           </p>
+        </div>
+      )}
+
+      {/* Character Details Modal */}
+      {selectedCharacter && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="character-title"
+          onClick={closeDetails}
+        >
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.98 }}
+            transition={{ duration: 0.2 }}
+            onClick={(e) => e.stopPropagation()}
+            className="relative z-10 w-full max-w-3xl mx-4 bg-white rounded-2xl shadow-2xl border border-white/60 overflow-hidden"
+          >
+            <div className="p-6 md:p-8">
+              <div className="flex items-start gap-6">
+                <div className="w-28 h-28 rounded-xl overflow-hidden bg-gradient-to-br from-teal-200 to-cyan-300 flex-shrink-0">
+                  {selectedCharacter.image_url ? (
+                    <img
+                      src={selectedCharacter.image_url}
+                      alt={selectedCharacter.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).style.display = 'none'
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-4xl">🎭</div>
+                  )}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h3 id="character-title" className="text-2xl font-bold text-gray-900">
+                        {selectedCharacter.name}
+                      </h3>
+                      {selectedCharacter.name_japanese && selectedCharacter.name_japanese !== selectedCharacter.name && (
+                        <div className="text-gray-600 text-sm mt-1">{selectedCharacter.name_japanese}</div>
+                      )}
+                      {selectedCharacter.name_romaji && (
+                        <div className="text-gray-500 text-xs italic mt-1">Also known as: {selectedCharacter.name_romaji}</div>
+                      )}
+                    </div>
+                    <div className={`px-3 py-1 rounded-full text-xs font-bold self-start ${getRoleColor(selectedCharacter.role)}`}>
+                      {getRoleIcon(selectedCharacter.role)} {selectedCharacter.role}
+                    </div>
+                  </div>
+
+                  {(selectedCharacter.voice_actor || selectedCharacter.voice_actor_japanese) && (
+                    <div className="mt-3 text-sm text-gray-700">
+                      {selectedCharacter.voice_actor && (
+                        <div><span className="font-semibold">Voice actor:</span> {selectedCharacter.voice_actor}</div>
+                      )}
+                      {selectedCharacter.voice_actor_japanese && (
+                        <div><span className="font-semibold">Voice actor (JP):</span> {selectedCharacter.voice_actor_japanese}</div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Details grid */}
+              {(() => {
+                const details = extractCharacterDetails(selectedCharacter.description)
+                const entries = (Object.entries(details) as Array<[keyof ParsedCharacterDetails, string]>).filter(([, v]) => Boolean(v && v.trim()))
+                if (entries.length === 0) return null
+                return (
+                  <div className="mt-6">
+                    <div className="text-[12px] uppercase tracking-wide text-gray-500 mb-2">Details</div>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {entries.map(([k, v]) => (
+                        <li key={k as string} className="flex items-start gap-2">
+                          <span className="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-teal-50 text-teal-700 border border-teal-100 whitespace-nowrap">
+                            {detailLabels[k]}
+                          </span>
+                          <span className="text-sm text-gray-800 break-words">{v}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )
+              })()}
+
+              {/* Description */}
+              {selectedCharacter.description && (
+                <div className="mt-6">
+                  <div className="text-[12px] uppercase tracking-wide text-gray-500 mb-2">Description</div>
+                  <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{selectedCharacter.description}</p>
+                </div>
+              )}
+
+              <div className="mt-8 flex justify-end">
+                <button
+                  type="button"
+                  onClick={closeDetails}
+                  className="px-4 py-2 rounded-lg bg-teal-600 text-white hover:bg-teal-700 transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </motion.div>
         </div>
       )}
     </div>
