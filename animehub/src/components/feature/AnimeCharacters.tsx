@@ -121,6 +121,10 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
   const [error, setError] = useState<string | null>(null)
   const [expandedById, setExpandedById] = useState<Record<string, boolean>>({})
 
+  const toggleExpanded = (id: string) => {
+    setExpandedById(prev => ({ ...prev, [id]: !prev[id] }))
+  }
+
   useEffect(() => {
     const fetchCharacters = async () => {
       try {
@@ -260,7 +264,16 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/30 hover:shadow-xl transition-all duration-300 group"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  toggleExpanded(character.id)
+                }
+              }}
+              onClick={() => toggleExpanded(character.id)}
+              className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/30 hover:shadow-xl transition-all duration-300 group cursor-pointer"
             >
               {/* Character Image */}
               <div className="relative mb-4">
@@ -312,7 +325,7 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
                   const visible = isExpanded ? entries : entries.slice(0, 6)
 
                   return entries.length > 0 ? (
-                    <div className="mt-3 text-left">
+                    <div className="mt-3 text-left relative z-10">
                       <div className="text-[11px] uppercase tracking-wide text-gray-500 mb-1">Details</div>
                       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {visible.map(([k, v]) => (
@@ -327,8 +340,12 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
                       {entries.length > 6 && (
                         <button
                           type="button"
-                          onClick={() => setExpandedById(prev => ({ ...prev, [character.id]: !isExpanded }))}
-                          className="mt-2 text-[11px] text-teal-700 hover:text-teal-800 font-medium"
+                          aria-expanded={isExpanded}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            toggleExpanded(character.id)
+                          }}
+                          className="mt-2 text-[11px] text-teal-700 hover:text-teal-800 font-medium underline"
                         >
                           {isExpanded ? 'Show less' : `Show ${entries.length - 6} more`}
                         </button>
@@ -339,7 +356,7 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
 
                 {/* Description */}
                 {character.description && (
-                  <div className="mt-3 text-xs text-gray-600 line-clamp-3">
+                  <div className={`mt-3 text-xs text-gray-600 ${expandedById[character.id] ? '' : 'line-clamp-3'}`}>
                     {character.description}
                   </div>
                 )}
