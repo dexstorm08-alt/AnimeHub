@@ -149,6 +149,10 @@ export default function RelatedAnime({ animeId, currentTitle, currentGenres }: R
                         src={anime.poster_url}
                         alt={anime.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        width={300}
+                        height={400}
+                        loading="lazy"
+                        decoding="async"
                         onError={(e) => {
                           e.currentTarget.style.display = 'none'
                         }}

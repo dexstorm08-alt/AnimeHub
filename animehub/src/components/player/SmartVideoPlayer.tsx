@@ -298,6 +298,7 @@ export default function SmartVideoPlayer({
         title={title}
         className="w-full h-full"
         allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+        loading="lazy"
         onLoad={handleYouTubeReady}
       />
     );
@@ -325,6 +326,7 @@ export default function SmartVideoPlayer({
         className="w-full h-full"
         allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
         sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+        loading="lazy"
         onLoad={() => console.log('Iframe player loaded')}
         onError={() => handleError('Failed to load video player')}
       />

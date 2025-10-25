@@ -91,9 +91,13 @@ export default function AdminNavbar() {
                 src={user?.avatar_url || "https://readdy.ai/api/search-image?query=professional%20admin%20avatar%20with%20glasses%20and%20suit%2C%20clean%20background%2C%20corporate%20style%2C%20high%20quality%20portrait&width=40&height=40&seq=admin-profile&orientation=squarish"}
                 alt="Admin"
                 className="w-8 h-8 rounded-full object-cover object-top"
+                width={32}
+                height={32}
+                loading="lazy"
+                decoding="async"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
-                  e.currentTarget.nextElementSibling.style.display = 'flex';
+                  (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'flex';
                 }}
               />
               <div className="w-8 h-8 bg-blue-100 rounded-full items-center justify-center hidden">

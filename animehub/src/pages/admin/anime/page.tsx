@@ -779,6 +779,10 @@ This action cannot be undone.`,
                         className="h-24 w-18 rounded-lg object-cover shadow-md"
                         src={item.poster_url || item.thumbnail || '/placeholder-anime.jpg'}
                         alt={item.title}
+                        width={72}
+                        height={96}
+                        loading="lazy"
+                        decoding="async"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.src = 'https://via.placeholder.com/150x200/6366f1/ffffff?text=Anime';
@@ -1012,6 +1016,10 @@ This action cannot be undone.`,
                     className="h-48 w-36 rounded-xl object-cover border-4 border-white/30 shadow-xl"
                     src={selectedAnimeForModal.poster_url || selectedAnimeForModal.thumbnail || '/placeholder-anime.jpg'}
                     alt={selectedAnimeForModal.title}
+                    width={144}
+                    height={192}
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.src = 'https://via.placeholder.com/300x400/6366f1/ffffff?text=Anime';
