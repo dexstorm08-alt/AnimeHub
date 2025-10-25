@@ -309,7 +309,35 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
                   {selectedCharacter.role}
                 </span>
               </div>
-              
+              {/* Names (structured) */}
+              <div className="mb-6">
+                <h4 className="text-sm font-semibold text-gray-700 mb-2">Names</h4>
+                <dl className="overflow-hidden rounded-xl border border-gray-200 divide-y divide-gray-100">
+                  <div className="grid grid-cols-3 gap-2 px-4 py-3">
+                    <dt className="text-xs text-gray-500 col-span-1">English</dt>
+                    <dd className="text-sm text-gray-800 col-span-2">{selectedCharacter.name}</dd>
+                  </div>
+                  {selectedCharacter.name_romaji && (
+                    <div className="grid grid-cols-3 gap-2 px-4 py-3">
+                      <dt className="text-xs text-gray-500 col-span-1">Romaji</dt>
+                      <dd className="text-sm text-gray-800 col-span-2">{selectedCharacter.name_romaji}</dd>
+                    </div>
+                  )}
+                  {selectedCharacter.name_japanese && (
+                    <div className="grid grid-cols-3 gap-2 px-4 py-3">
+                      <dt className="text-xs text-gray-500 col-span-1">Japanese</dt>
+                      <dd className="text-sm text-gray-800 col-span-2">{selectedCharacter.name_japanese}</dd>
+                    </div>
+                  )}
+                  <div className="grid grid-cols-3 gap-2 px-4 py-3">
+                    <dt className="text-xs text-gray-500 col-span-1">Role</dt>
+                    <dd className="text-sm text-gray-800 col-span-2 capitalize">{selectedCharacter.role}</dd>
+                  </div>
+                </dl>
+              </div>
+
+              {/* Biography */}
+              <h4 className="text-sm font-semibold text-gray-700 mb-2">Biography</h4>
               <div className="prose prose-sm max-w-none text-gray-700">
                 {selectedCharacter.description ? (
                   <>
