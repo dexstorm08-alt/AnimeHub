@@ -513,7 +513,7 @@ export default function AnimeDetailPage() {
             </h2>
             
             <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/50">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" style={{ contentVisibility: 'auto', containIntrinsicSize: '1000px' }}>
                 {episodes.map((episode: any) => {
                   const episodeNumber = episode.episode_number || episode.number;
                   const episodeTitle = episode.title || `Episode ${episodeNumber}`;

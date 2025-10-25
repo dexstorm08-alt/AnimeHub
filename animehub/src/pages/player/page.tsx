@@ -259,7 +259,7 @@ export default function PlayerPage() {
             </h2>
             
             <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/50">
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3" style={{ contentVisibility: 'auto', containIntrinsicSize: '1000px' }}>
                 {episodes.length === 0 ? (
                   <div className="col-span-full text-center py-8">
                     <p className="text-teal-600">No episodes available</p>
