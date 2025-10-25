@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '../../lib/supabase'
+import { extractCharacterInfo } from '../../utils/characterInfoExtractor'
 
 interface Character {
   id: string
@@ -128,6 +129,7 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
   }
 
   const filteredCharacters = getFilteredCharacters()
+  const extracted = useMemo(() => extractCharacterInfo(selectedCharacter?.description), [selectedCharacter?.description])
 
   return (
     <>
@@ -335,6 +337,45 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
                   </div>
                 </dl>
               </div>
+
+              {/* Quick Facts */}
+              {(extracted.height || extracted.weight || extracted.age || extracted.birthday || extracted.father || extracted.mother || extracted.siblings || extracted.origin || extracted.abilities || extracted.affiliations) && (
+                <div className="mb-6">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2">Quick Facts</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {extracted.height && (
+                      <div className="flex items-start gap-2 bg-gray-50 rounded-lg p-3 border border-gray-100"><span className="text-xs text-gray-500 w-20">Height</span><span className="text-sm text-gray-800">{extracted.height}</span></div>
+                    )}
+                    {extracted.weight && (
+                      <div className="flex items-start gap-2 bg-gray-50 rounded-lg p-3 border border-gray-100"><span className="text-xs text-gray-500 w-20">Weight</span><span className="text-sm text-gray-800">{extracted.weight}</span></div>
+                    )}
+                    {extracted.age && (
+                      <div className="flex items-start gap-2 bg-gray-50 rounded-lg p-3 border border-gray-100"><span className="text-xs text-gray-500 w-20">Age</span><span className="text-sm text-gray-800">{extracted.age}</span></div>
+                    )}
+                    {extracted.birthday && (
+                      <div className="flex items-start gap-2 bg-gray-50 rounded-lg p-3 border border-gray-100"><span className="text-xs text-gray-500 w-20">Birthday</span><span className="text-sm text-gray-800">{extracted.birthday}</span></div>
+                    )}
+                    {extracted.father && (
+                      <div className="flex items-start gap-2 bg-gray-50 rounded-lg p-3 border border-gray-100"><span className="text-xs text-gray-500 w-20">Father</span><span className="text-sm text-gray-800">{extracted.father}</span></div>
+                    )}
+                    {extracted.mother && (
+                      <div className="flex items-start gap-2 bg-gray-50 rounded-lg p-3 border border-gray-100"><span className="text-xs text-gray-500 w-20">Mother</span><span className="text-sm text-gray-800">{extracted.mother}</span></div>
+                    )}
+                    {extracted.siblings && (
+                      <div className="flex items-start gap-2 bg-gray-50 rounded-lg p-3 border border-gray-100"><span className="text-xs text-gray-500 w-20">Siblings</span><span className="text-sm text-gray-800">{extracted.siblings}</span></div>
+                    )}
+                    {extracted.origin && (
+                      <div className="flex items-start gap-2 bg-gray-50 rounded-lg p-3 border border-gray-100"><span className="text-xs text-gray-500 w-20">Origin</span><span className="text-sm text-gray-800">{extracted.origin}</span></div>
+                    )}
+                    {extracted.abilities && (
+                      <div className="flex items-start gap-2 bg-gray-50 rounded-lg p-3 border border-gray-100"><span className="text-xs text-gray-500 w-20">Abilities</span><span className="text-sm text-gray-800">{extracted.abilities}</span></div>
+                    )}
+                    {extracted.affiliations && (
+                      <div className="flex items-start gap-2 bg-gray-50 rounded-lg p-3 border border-gray-100"><span className="text-xs text-gray-500 w-20">Affiliations</span><span className="text-sm text-gray-800">{extracted.affiliations}</span></div>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Biography */}
               <h4 className="text-sm font-semibold text-gray-700 mb-2">Biography</h4>
