@@ -21,6 +21,7 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'main'>('main')
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null)
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -161,7 +162,10 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/30 hover:shadow-xl transition-all duration-300 group"
+              className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/30 hover:shadow-xl transition-all duration-300 group cursor-pointer"
+              onClick={() => setSelectedCharacter(character)}
+              role="button"
+              aria-label={`View details for ${character.name}`}
             >
               {/* Character Image */}
               <div className="relative mb-4">
@@ -229,5 +233,88 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
         </div>
       )}
     </div>
+
+    {/* Character Detail Modal */}
+    <AnimatePresence>
+      {selectedCharacter && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedCharacter(null)}
+        >
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0, y: 10 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 10 }}
+            transition={{ duration: 0.2 }}
+            className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="character-detail-title"
+          >
+            <div className="relative bg-gradient-to-r from-teal-600 to-cyan-600 h-32">
+              <button
+                onClick={() => setSelectedCharacter(null)}
+                className="absolute top-3 right-3 w-9 h-9 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all duration-200"
+                aria-label="Close"
+              >
+                <i className="ri-close-line text-lg"></i>
+              </button>
+              <div className="absolute -bottom-10 left-6 w-20 h-20 rounded-full overflow-hidden ring-4 ring-white/80 bg-white">
+                {selectedCharacter.image_url ? (
+                  <img
+                    src={selectedCharacter.image_url}
+                    alt={selectedCharacter.name}
+                    className="w-full h-full object-cover"
+                    width={80}
+                    height={80}
+                    loading="lazy"
+                    decoding="async"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.display = 'none'
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-2xl">🎭</div>
+                )}
+              </div>
+            </div>
+            
+            <div className="pt-12 p-6">
+              <h3 id="character-detail-title" className="text-xl font-bold text-gray-900 mb-1">
+                {selectedCharacter.name}
+              </h3>
+              {(selectedCharacter.name_romaji || selectedCharacter.name_japanese) && (
+                <div className="text-sm text-gray-600 mb-3">
+                  {selectedCharacter.name_romaji && (
+                    <span className="mr-3 italic">{selectedCharacter.name_romaji}</span>
+                  )}
+                  {selectedCharacter.name_japanese && (
+                    <span className="text-gray-500">{selectedCharacter.name_japanese}</span>
+                  )}
+                </div>
+              )}
+              
+              <div className="mb-4">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-teal-100 text-teal-700">
+                  {selectedCharacter.role}
+                </span>
+              </div>
+              
+              <div className="prose prose-sm max-w-none text-gray-700">
+                {selectedCharacter.description ? (
+                  <p className="leading-relaxed">{selectedCharacter.description}</p>
+                ) : (
+                  <p className="text-gray-500">No additional information available for this character.</p>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }
