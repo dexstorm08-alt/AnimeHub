@@ -317,6 +317,10 @@ export default function PlayerPage() {
                   src={anime.poster_url || `https://readdy.ai/api/search-image?query=Anime%20poster%20${anime.title}%2C%20Studio%20Ghibli%20style%2C%20beautiful%20artwork%2C%20detailed%20illustration&width=300&height=450&seq=player-poster&orientation=portrait`}
                   alt={anime.title}
                   className="w-32 h-44 object-cover object-top rounded-xl flex-shrink-0"
+                  width={128}
+                  height={176}
+                  loading="lazy"
+                  decoding="async"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src = `https://readdy.ai/api/search-image?query=Anime%20poster%20${anime.title}%2C%20Studio%20Ghibli%20style%2C%20beautiful%20artwork%2C%20detailed%20illustration&width=300&height=450&seq=player-poster-fallback&orientation=portrait`;

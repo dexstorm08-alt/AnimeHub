@@ -355,6 +355,10 @@ export const AnimeScraperComponent: React.FC = () => {
                     src={selectedAnime.poster_url}
                     alt={selectedAnime.title}
                     className="w-16 h-20 object-cover rounded-lg"
+                    width={64}
+                    height={80}
+                    loading="lazy"
+                    decoding="async"
                   />
                 )}
                 <div>
@@ -395,6 +399,10 @@ export const AnimeScraperComponent: React.FC = () => {
                           src={anime.poster_url}
                           alt={anime.title}
                           className="w-12 h-16 object-cover rounded"
+                          width={48}
+                          height={64}
+                          loading="lazy"
+                          decoding="async"
                         />
                       )}
                       <div className="flex-1">

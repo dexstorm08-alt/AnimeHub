@@ -171,6 +171,10 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
                       src={character.image_url}
                       alt={character.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      width={96}
+                      height={96}
+                      loading="lazy"
+                      decoding="async"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement
                         target.style.display = 'none'

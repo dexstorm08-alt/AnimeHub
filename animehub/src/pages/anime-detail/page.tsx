@@ -249,6 +249,10 @@ export default function AnimeDetailPage() {
               src={anime.banner_url}
               alt={anime.title}
               className="w-full h-full object-cover"
+              width={1920}
+              height={600}
+              loading="eager"
+              decoding="async"
               onError={(e) => {
                 e.currentTarget.style.display = 'none'
               }}
@@ -277,6 +281,10 @@ export default function AnimeDetailPage() {
                       src={anime.poster_url || "https://readdy.ai/api/search-image?query=Anime%20poster&width=300&height=450&seq=anime-poster&orientation=portrait"}
                       alt={anime.title}
                       className="w-full h-full object-cover"
+                      width={300}
+                      height={450}
+                      loading="lazy"
+                      decoding="async"
                       onError={(e) => {
                         e.currentTarget.src = "https://readdy.ai/api/search-image?query=Anime%20poster&width=300&height=450&seq=anime-poster-fallback&orientation=portrait"
                       }}

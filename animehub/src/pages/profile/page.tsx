@@ -252,6 +252,10 @@ export default function ProfilePage() {
                   src={avatarPreview || AvatarService.getAvatarUrl(user?.avatar_url, user?.id)}
                   alt="Profile Avatar"
                   className="w-24 h-24 rounded-full object-cover object-top border-4 border-teal-200"
+                  width={96}
+                  height={96}
+                  loading="lazy"
+                  decoding="async"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src = AvatarService.getAvatarUrl(null, user?.id);
@@ -482,6 +486,10 @@ export default function ProfilePage() {
                           src={item.thumbnail || item.anime?.poster_url || "https://readdy.ai/api/search-image?query=Anime%20thumbnail%2C%20default%20anime%20image&width=200&height=300&seq=watching-thumbnail&orientation=portrait"}
                           alt={item.title}
                           className="w-16 h-20 object-cover object-top rounded-lg hover:scale-105 transition-transform duration-300"
+                          width={64}
+                          height={80}
+                          loading="lazy"
+                          decoding="async"
                         />
                       </Link>
                       

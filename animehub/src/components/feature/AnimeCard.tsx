@@ -159,6 +159,7 @@ const AnimeCard = React.memo(function AnimeCard(props: AnimeCardProps) {
               loading="lazy"
               width={300}
               height={400}
+              decoding="async"
             />
             
             {/* Badges */}
@@ -301,6 +302,10 @@ const AnimeCard = React.memo(function AnimeCard(props: AnimeCardProps) {
                   src={props.cover}
                   alt={props.title}
                   className="w-full h-48 object-cover object-top rounded-t-2xl"
+                  width={800}
+                  height={192}
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent rounded-t-2xl" />
                 <button

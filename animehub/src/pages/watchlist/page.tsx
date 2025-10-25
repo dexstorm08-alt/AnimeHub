@@ -230,6 +230,10 @@ export default function WatchlistPage() {
                             src={anime.image}
                             alt={anime.title}
                             className="w-24 h-32 object-cover object-top rounded-xl hover:scale-105 transition-transform duration-300 cursor-pointer"
+                            width={96}
+                            height={128}
+                            loading="lazy"
+                            decoding="async"
                           />
                         </Link>
                         
