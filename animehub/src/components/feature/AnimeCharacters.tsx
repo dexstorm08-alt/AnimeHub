@@ -12,6 +12,105 @@ interface Character {
   description?: string
 }
 
+type ParsedCharacterDetails = {
+  height?: string
+  weight?: string
+  age?: string
+  birthday?: string
+  gender?: string
+  bloodType?: string
+  affiliation?: string
+  occupation?: string
+  father?: string
+  mother?: string
+  siblings?: string
+  spouse?: string
+  partner?: string
+  alias?: string
+  species?: string
+  origin?: string
+}
+
+const detailLabels: Record<keyof ParsedCharacterDetails, string> = {
+  height: 'Height',
+  weight: 'Weight',
+  age: 'Age',
+  birthday: 'Birthday',
+  gender: 'Gender',
+  bloodType: 'Blood type',
+  affiliation: 'Affiliation',
+  occupation: 'Occupation',
+  father: 'Father',
+  mother: 'Mother',
+  siblings: 'Siblings',
+  spouse: 'Spouse',
+  partner: 'Partner',
+  alias: 'Alias',
+  species: 'Species',
+  origin: 'Origin'
+}
+
+function extractCharacterDetails(rawText?: string): ParsedCharacterDetails {
+  if (!rawText) return {}
+
+  const text = rawText
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  const out: ParsedCharacterDetails = {}
+
+  type Pattern = { keys: string[]; assign: (val: string) => void }
+  const patterns: Pattern[] = [
+    { keys: ['height'], assign: (v) => (out.height = v) },
+    { keys: ['weight'], assign: (v) => (out.weight = v) },
+    { keys: ['age'], assign: (v) => (out.age = v) },
+    { keys: ['birthday', 'birth date', 'born'], assign: (v) => (out.birthday = v) },
+    { keys: ['gender', 'sex'], assign: (v) => (out.gender = v) },
+    { keys: ['blood type', 'blood'], assign: (v) => (out.bloodType = v) },
+    { keys: ['affiliation', 'organization', 'team'], assign: (v) => (out.affiliation = v) },
+    { keys: ['occupation', 'job', 'role'], assign: (v) => (out.occupation = v) },
+    { keys: ['father', 'dad'], assign: (v) => (out.father = v) },
+    { keys: ['mother', 'mom'], assign: (v) => (out.mother = v) },
+    { keys: ['sibling', 'brother', 'sister', 'siblings'], assign: (v) => (out.siblings = v) },
+    { keys: ['spouse', 'wife', 'husband'], assign: (v) => (out.spouse = v) },
+    { keys: ['partner'], assign: (v) => (out.partner = v) },
+    { keys: ['alias', 'aka', 'also known as', 'nicknames', 'nickname'], assign: (v) => (out.alias = v) },
+    { keys: ['species', 'race'], assign: (v) => (out.species = v) },
+    { keys: ['origin', 'hometown', 'home town', 'from'], assign: (v) => (out.origin = v) }
+  ]
+
+  for (const { keys, assign } of patterns) {
+    const keyGroup = keys
+      .map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      .join('|')
+    const re = new RegExp(
+      `(?:^|[.;\n\r\t\s])(?:${keyGroup})\s*[:\-—]\\s*([^.;\n\r]+)`,
+      'i'
+    )
+    const m = text.match(re)
+    if (m && m[1]) {
+      const value = m[1].trim()
+      if (value) assign(value)
+    }
+  }
+
+  const parentsMatch = text.match(/parents\s*[:\-—]\s*([^.;\n\r]+)/i)
+  if (parentsMatch?.[1]) {
+    const parents = parentsMatch[1].trim()
+    if (!out.father && /father|dad/i.test(parents)) {
+      const fm = parents.match(/(?:father|dad)\s*[:\-—]?\s*([^,;]+)/i)
+      if (fm?.[1]) out.father = fm[1].trim()
+    }
+    if (!out.mother && /mother|mom/i.test(parents)) {
+      const mm = parents.match(/(?:mother|mom)\s*[:\-—]?\s*([^,;]+)/i)
+      if (mm?.[1]) out.mother = mm[1].trim()
+    }
+  }
+
+  return out
+}
+
 interface AnimeCharactersProps {
   animeId: string
 }
@@ -20,6 +119,7 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
   const [characters, setCharacters] = useState<Character[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [expandedById, setExpandedById] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -204,8 +304,42 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
                   </p>
                 )}
 
+                {/* Parsed Details */}
+                {character.description && (() => {
+                  const details = extractCharacterDetails(character.description)
+                  const entries = (Object.entries(details) as Array<[keyof ParsedCharacterDetails, string]>).filter(([, v]) => Boolean(v && v.trim()))
+                  const isExpanded = Boolean(expandedById[character.id])
+                  const visible = isExpanded ? entries : entries.slice(0, 6)
+
+                  return entries.length > 0 ? (
+                    <div className="mt-3 text-left">
+                      <div className="text-[11px] uppercase tracking-wide text-gray-500 mb-1">Details</div>
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {visible.map(([k, v]) => (
+                          <li key={k as string} className="flex items-start gap-2">
+                            <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-teal-50 text-teal-700 border border-teal-100 whitespace-nowrap">
+                              {detailLabels[k]}
+                            </span>
+                            <span className="text-xs text-gray-700 break-words">{v}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      {entries.length > 6 && (
+                        <button
+                          type="button"
+                          onClick={() => setExpandedById(prev => ({ ...prev, [character.id]: !isExpanded }))}
+                          className="mt-2 text-[11px] text-teal-700 hover:text-teal-800 font-medium"
+                        >
+                          {isExpanded ? 'Show less' : `Show ${entries.length - 6} more`}
+                        </button>
+                      )}
+                    </div>
+                  ) : null
+                })()}
+
+                {/* Description */}
                 {character.description && (
-                  <div className="text-xs text-gray-600 line-clamp-3">
+                  <div className="mt-3 text-xs text-gray-600 line-clamp-3">
                     {character.description}
                   </div>
                 )}
