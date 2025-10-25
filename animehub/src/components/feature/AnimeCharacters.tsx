@@ -356,7 +356,14 @@ export default function AnimeCharacters({ animeId }: AnimeCharactersProps) {
 
                 {/* Description */}
                 {character.description && (
-                  <div className={`mt-3 text-xs text-gray-600 ${expandedById[character.id] ? '' : 'line-clamp-3'}`}>
+                  <div
+                    id={`desc-${character.id}`}
+                    className={`mt-3 text-xs text-gray-600 transition-[max-height] duration-300 ease-in-out ${
+                      expandedById[character.id]
+                        ? 'max-h-[1000px]'
+                        : 'max-h-16 overflow-hidden'
+                    }`}
+                  >
                     {character.description}
                   </div>
                 )}
