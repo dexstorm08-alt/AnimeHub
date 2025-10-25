@@ -83,6 +83,7 @@ const HeroCarousel = React.memo(function HeroCarousel({ slides, loading = false 
             alt={currentSlideData.title}
             className="w-full h-full object-cover object-top"
             loading="eager"
+            fetchpriority="high"
             width={1920}
             height={1080}
             decoding="sync"
