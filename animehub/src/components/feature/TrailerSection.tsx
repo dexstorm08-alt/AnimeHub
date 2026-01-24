@@ -132,6 +132,9 @@ export default function TrailerSection({ trailerUrl, title }: TrailerSectionProp
               src={thumbnailUrl}
               alt={`${title} Trailer`}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              width={1280}
+              height={720}
+              loading="lazy"
               onError={(e) => {
                 // Fallback to a default thumbnail if YouTube thumbnail fails
                 e.currentTarget.src = 'https://readdy.ai/api/search-image?query=Anime%20trailer%20thumbnail&width=1280&height=720&seq=trailer-fallback&orientation=landscape'
@@ -158,13 +161,15 @@ export default function TrailerSection({ trailerUrl, title }: TrailerSectionProp
           </div>
         ) : (
           // YouTube Embed
-          <iframe
-            src={embedUrl}
-            title={`${title} Official Trailer`}
-            className="w-full h-full"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+          <div className="relative w-full h-full">
+            <iframe
+              src={embedUrl}
+              title={`${title} Official Trailer`}
+              className="absolute inset-0 w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
         )}
       </div>
     </motion.section>

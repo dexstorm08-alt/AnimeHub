@@ -1078,6 +1078,10 @@ export const EnhancedAnimeImporter: React.FC = () => {
                                   src={anime.poster_url}
                                   alt={anime.title}
                                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                  width={300}
+                                  height={192}
+                                  loading="lazy"
+                                  decoding="async"
                                   onError={(e) => {
                                     e.currentTarget.style.display = 'none'
                                   }}

@@ -87,6 +87,9 @@ export default function SearchBar({
                             src={anime.poster_url || "https://readdy.ai/api/search-image?query=Anime%20poster%20default&width=60&height=80&seq=search-bar&orientation=portrait"}
                             alt={anime.title}
                             className="w-12 h-16 object-cover object-top rounded-lg"
+                            width={48}
+                            height={64}
+                            loading="lazy"
                           />
                         </div>
                         

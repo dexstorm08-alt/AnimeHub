@@ -128,6 +128,10 @@ export default function Navbar() {
                       src={user.avatar_url || "https://readdy.ai/api/search-image?query=Anime%20character%20avatar%2C%20friendly%20face%2C%20Studio%20Ghibli%20style%2C%20simple%20background%2C%20portrait%2C%20colorful%20anime%20style&width=150&height=150&seq=navbar-avatar&orientation=squarish"}
                       alt={user.username}
                       className="w-full h-full object-cover object-top"
+                      width={32}
+                      height={32}
+                      loading="lazy"
+                      decoding="async"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';
@@ -260,6 +264,10 @@ export default function Navbar() {
                         src="https://readdy.ai/api/search-image?query=Anime%20character%20avatar%2C%20friendly%20face%2C%20Studio%20Ghibli%20style%2C%20simple%20background%2C%20portrait%2C%20colorful%20anime%20style&width=150&height=150&seq=navbar-avatar-mobile&orientation=squarish"
                         alt="Profile"
                         className="w-full h-full object-cover object-top"
+                        width={32}
+                        height={32}
+                        loading="lazy"
+                        decoding="async"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.style.display = 'none';

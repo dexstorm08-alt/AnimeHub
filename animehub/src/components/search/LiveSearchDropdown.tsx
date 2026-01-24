@@ -69,6 +69,10 @@ export default function LiveSearchDropdown({
                         src={anime.poster_url || "https://readdy.ai/api/search-image?query=Anime%20poster%20default&width=60&height=80&seq=live-search&orientation=portrait"}
                         alt={anime.title}
                         className="w-12 h-16 object-cover object-top rounded-lg"
+                        width={48}
+                        height={64}
+                        loading="lazy"
+                        decoding="async"
                       />
                     </div>
                     

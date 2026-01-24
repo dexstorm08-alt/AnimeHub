@@ -314,9 +314,13 @@ export default function AdminUsersPage() {
                     <div className="flex-shrink-0">
                             {user.avatar_url ? (
                               <img
-                          className="h-16 w-16 rounded-full object-cover border-2 border-gray-200"
+                                className="h-16 w-16 rounded-full object-cover border-2 border-gray-200"
                                 src={user.avatar_url}
                                 alt={user.username}
+                                width={64}
+                                height={64}
+                                loading="lazy"
+                                decoding="async"
                               />
                             ) : (
                         <div className="h-16 w-16 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center border-2 border-gray-200">

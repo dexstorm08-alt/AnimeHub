@@ -259,7 +259,7 @@ export default function PlayerPage() {
             </h2>
             
             <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/50">
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3" style={{ contentVisibility: 'auto', containIntrinsicSize: '1000px' }}>
                 {episodes.length === 0 ? (
                   <div className="col-span-full text-center py-8">
                     <p className="text-teal-600">No episodes available</p>
@@ -317,6 +317,10 @@ export default function PlayerPage() {
                   src={anime.poster_url || `https://readdy.ai/api/search-image?query=Anime%20poster%20${anime.title}%2C%20Studio%20Ghibli%20style%2C%20beautiful%20artwork%2C%20detailed%20illustration&width=300&height=450&seq=player-poster&orientation=portrait`}
                   alt={anime.title}
                   className="w-32 h-44 object-cover object-top rounded-xl flex-shrink-0"
+                  width={128}
+                  height={176}
+                  loading="lazy"
+                  decoding="async"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src = `https://readdy.ai/api/search-image?query=Anime%20poster%20${anime.title}%2C%20Studio%20Ghibli%20style%2C%20beautiful%20artwork%2C%20detailed%20illustration&width=300&height=450&seq=player-poster-fallback&orientation=portrait`;

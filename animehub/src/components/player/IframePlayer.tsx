@@ -29,7 +29,7 @@ export const IframePlayer: React.FC<IframePlayerProps> = ({
   return (
     <div className={`iframe-player-container ${className}`}>
       {is9animeUrl && !isGogoanimeUrl && !isMegaplayUrl ? (
-        <div className="relative w-full h-full bg-gray-900 rounded-lg overflow-hidden">
+        <div className="relative w-full h-full bg-gray-900 rounded-lg overflow-hidden aspect-video">
           <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
             <div className="text-center text-white p-6">
               <div className="text-4xl mb-4">🎬</div>
@@ -50,6 +50,7 @@ export const IframePlayer: React.FC<IframePlayerProps> = ({
           </div>
         </div>
       ) : (
+        <div className="relative w-full aspect-video">
         <iframe
           src={src}
           title={title}
@@ -58,7 +59,7 @@ export const IframePlayer: React.FC<IframePlayerProps> = ({
           allowFullScreen={allowFullScreen}
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          className="w-full h-full rounded-lg shadow-lg"
+          className="absolute inset-0 w-full h-full rounded-lg shadow-lg"
           style={{
             minHeight: typeof height === 'string' ? height : `${height}px`,
             border: 'none',
@@ -66,6 +67,7 @@ export const IframePlayer: React.FC<IframePlayerProps> = ({
           }}
           sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
         />
+        </div>
       )}
     </div>
   );
